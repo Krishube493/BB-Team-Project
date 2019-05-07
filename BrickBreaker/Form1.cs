@@ -15,12 +15,7 @@ namespace BrickBreaker
 {
     
     public partial class Form1 : Form
-    {
-        //TESTING List
-        //items in the "highScore" are "scores" but in string form, 
-        //the items from the "highScore" can be converted back for comparison
-        //XML file will only save the high scores
-        
+    {        
         public static List<HighScore> highScores = new List<HighScore>();
         /// <summary>
         /// The Game's Soundplayer.
@@ -36,6 +31,10 @@ namespace BrickBreaker
             Location = new Point(0, 0);
         }
 
+        /// <summary>
+        /// Sets the screen height and sizes
+        /// </summary>
+        /// <param name="c"></param>
         [Obsolete("TODO Game Screen scales incorrectly")]
         public void ConfigScreen(ref UserControl c)
         {
@@ -75,6 +74,11 @@ namespace BrickBreaker
             return false;
         }
 
+        /// <summary>
+        /// Changes the displaying screen and deletes the last screen
+        /// </summary>
+        /// <param name="remove"></param>
+        /// <param name="add"></param>
         public void ChangeScreen(UserControl remove, UserControl add)
         {
             ConfigScreen(ref add);
@@ -85,20 +89,13 @@ namespace BrickBreaker
 
         }
 
+        /// <summary>
+        /// When the form finishes loading
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_Load(object sender, EventArgs e)
         {
-            //Plans for next step...determine if the score should be saved to the list (5 scores should be in high scores)
-            //Set variables to each of the score like highScores[0]...highScores[4]...as these will be displayed 
-            //if the list contains the same score, then do not add it again to the list
-            //if (highScores.Contains(the same score))
-            //{
-            //  Do not display, just proceed
-            //}
-            //if the list does not contain the same score, check if the score is more or less than the scores in highScores
-            //{
-            //  if the score is more, then display
-            //  if the score is less, then do not display
-            //}
             ChangeScreen(null, new StartScreen());
         }
     }

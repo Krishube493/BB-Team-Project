@@ -57,6 +57,63 @@ namespace BrickBreaker
         {
             InitializeComponent();
             //
+            loadScoresRK();
+            //compare the scores
+            if (Form1.highScores.Count() == 2)
+            {
+                if (Form1.highScores[0] == Form1.highScores[1]) { Form1.highScores.RemoveAt(1); }
+            }
+            else if (Form1.highScores.Count() == 3)
+            {
+                if (Form1.highScores[0] == Form1.highScores[1]) { Form1.highScores.RemoveAt(1); }
+                if (Form1.highScores[0] == Form1.highScores[2]) { Form1.highScores.RemoveAt(2); }
+
+                if (Form1.highScores[1] == Form1.highScores[2]) { Form1.highScores.RemoveAt(2); }
+            }
+            else if (Form1.highScores.Count() == 4)
+            {
+                if (Form1.highScores[0] == Form1.highScores[1]) { Form1.highScores.RemoveAt(1); }
+                if (Form1.highScores[0] == Form1.highScores[2]) { Form1.highScores.RemoveAt(2); }
+                if (Form1.highScores[0] == Form1.highScores[3]) { Form1.highScores.RemoveAt(3); }
+
+                if (Form1.highScores[1] == Form1.highScores[2]) { Form1.highScores.RemoveAt(2); }
+                if (Form1.highScores[1] == Form1.highScores[3]) { Form1.highScores.RemoveAt(3); }
+
+                if (Form1.highScores[2] == Form1.highScores[3]) { Form1.highScores.RemoveAt(3); }
+            }
+            else if (Form1.highScores.Count() == 5)
+            {
+                if (Form1.highScores[0] == Form1.highScores[1]) { Form1.highScores.RemoveAt(1); }
+                if (Form1.highScores[0] == Form1.highScores[2]) { Form1.highScores.RemoveAt(2); }
+                if (Form1.highScores[0] == Form1.highScores[3]) { Form1.highScores.RemoveAt(3); }
+                if (Form1.highScores[0] == Form1.highScores[4]) { Form1.highScores.RemoveAt(4); }
+
+                if (Form1.highScores[1] == Form1.highScores[2]) { Form1.highScores.RemoveAt(2); }
+                if (Form1.highScores[1] == Form1.highScores[3]) { Form1.highScores.RemoveAt(3); }
+                if (Form1.highScores[1] == Form1.highScores[4]) { Form1.highScores.RemoveAt(4); }
+
+                if (Form1.highScores[2] == Form1.highScores[3]) { Form1.highScores.RemoveAt(3); }
+                if (Form1.highScores[2] == Form1.highScores[4]) { Form1.highScores.RemoveAt(4); }
+
+                if (Form1.highScores[3] == Form1.highScores[4]) { Form1.highScores.RemoveAt(4); }
+            }
+
+
+            //Sorting the code
+            Form1.highScores.Sort(delegate (HighScore x, HighScore y)
+            {
+                return x.score.CompareTo(y.score);
+            });
+
+            //removing scores at destined number 
+            if (Form1.highScores.Count() > 5)
+            {
+                Form1.highScores.RemoveAt(5);
+            }
+
+            //showing the score 
+            scoreOutput();
+
             //Adding Labels to Label list for easy management
             //
             labels.Add(titleLabel);
