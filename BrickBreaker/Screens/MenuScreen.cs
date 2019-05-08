@@ -30,6 +30,7 @@ namespace BrickBreaker
         //testing
         public void loadScoresRK()
         {
+            //Fix
             //creating Xml reader file 
             XmlReader reader = XmlReader.Create("Resources/HighScores.xml", null);
             string newScoreString;

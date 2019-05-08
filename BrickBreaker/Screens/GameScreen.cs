@@ -71,7 +71,7 @@ namespace BrickBreaker
         int ballSize = 20;
 
         // angle change buttons
-        int angleposition = 3;
+        public static int angleposition = 3;
 
         // angle points for the line aim
         Point p1 = new Point(1,1), p2 = new Point(1, 1);
@@ -83,54 +83,78 @@ namespace BrickBreaker
 
         // level variables
         List<XmlReader> levelList = new List<XmlReader>();
-        int currentlevelnum = 0;
+        int currentlevelnum = 1;
+        bool levelLoadstart = true;
+
+        // list for block sides
+        List<Rectangle> leftside = new List<Rectangle>();
+        List<Rectangle> rightside = new List<Rectangle>();
+
 
         public GameScreen(bool multiplayer = false)
         {
             InitializeComponent();
-            OnStart(); 
+            //OnStart(); 
             if (multiplayer)
                 player2Lives = 3;
         }
 
         public void levelLoad()
         {
-            XmlReader reader = XmlReader.Create("testlevel.xml");
+            if (levelLoadstart)
+            {
+                // need ten total items, think of list as actual level number -1
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/testlevel.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level1.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level2.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level3.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level4.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level5.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level6.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level7.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level8.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level9.xml"));
+                levelList.Add(XmlReader.Create("https://raw.githubusercontent.com/DimaPokusaev/BB-Team-Project/master/level10.xml"));
+            }
+
+            XmlReader reader = levelList[0];
             switch (currentlevelnum)
             {
                 case 0:
-                    reader = XmlReader.Create("testlevel.xml");
+                    reader = levelList[0];
                     break;
                 case 1:
-                    reader = XmlReader.Create("level1.xml");
+                    reader = levelList[1];
                     break;
                 case 2:
-                    reader = XmlReader.Create("level2.xml"); 
+                    reader = levelList[2];
                     break;
                 case 3:
-                    reader = XmlReader.Create("level3.xml"); 
+                    reader = levelList[3];
                     break;
                 case 4:
-                    reader = XmlReader.Create("level4.xml"); 
+                    reader = levelList[4];
                     break;
                 case 5:
-                    reader = XmlReader.Create("level5.xml");
+                    reader = levelList[5];
                     break;
                 case 6:
-                    reader = XmlReader.Create("level6.xml"); 
+                    reader = levelList[6];
                     break;
                 case 7:
-                    reader = XmlReader.Create("level7.xml"); 
+                    reader = levelList[7];
                     break;
                 case 8:
-                    reader = XmlReader.Create("level8.xml"); 
+                    reader = levelList[8];
                     break;
                 case 9:
-                    reader = XmlReader.Create("level9.xml"); 
+                    reader = levelList[9];
                     break;
             }
 
             currentlevel.Clear();
+            leftside.Clear();
+            rightside.Clear();
             while (reader.Read())
             {
                 string X, Y, HP;
@@ -144,7 +168,14 @@ namespace BrickBreaker
             currentlevel.RemoveAt(currentlevel.Count - 1);
             reader.Close();
             Refresh();
+
+            foreach(Block block in currentlevel)
+            {
+                leftside.Add(new Rectangle(block.x, block.y, 1, block.height));
+                rightside.Add(new Rectangle(new Rectangle(block.x, block.y, block.width, block.height).Right, block.y, 1, block.height));
+            }
         }
+
 
         public void OnStart()
         {
@@ -347,8 +378,8 @@ namespace BrickBreaker
                         ballList[0].Yangle *= -1;
 
                         // reset x and y speeds
-                        ballList[0].xSpeed = 8;
-                        ballList[0].ySpeed = 8;
+                        ballList[0].xSpeed = 6;
+                        ballList[0].ySpeed = 6;
 
                         if (player1Lives < 1)
                         {
@@ -400,18 +431,23 @@ namespace BrickBreaker
                 for (int i = 0; i < currentlevel.Count(); i++)
                 {
                     Block b = currentlevel[i];
+                    Rectangle ls = leftside[i];
+                    Rectangle rs = rightside[i];
+
                     if (ball.BlockCollision(b))
                     {
+                        if (ball.side_collision(ls) || ball.side_collision(rs))
+                        {
+                            ball.xSpeed *= -1;
+                        }
+                        leftside.RemoveAt(i);
+                        rightside.RemoveAt(i);
+
                         powerup_creation(new Point(b.x, b.y));
                         ball.Yangle *= -1;
                         currentlevel.Remove(b);
                     }
                 }
-            }
-
-            foreach (Block b in removeBlocks)
-            {
-                currentlevel.Remove(b);
             }
 
             // Check if ball has collided with any currentlevel
@@ -433,14 +469,6 @@ namespace BrickBreaker
                             if (currentlevelnum == levelList.Count())
                             {
                                 OnEnd();
-                            }
-                            else
-                            {
-                                currentlevelnum++;
-                                levelLoad();
-                                start = false;
-                                ballList[0].x = paddle.x + (paddle.width / 2) - (ballList[0].size / 2);
-                                ballList[0].y = paddle.y - 21;
                             }
                         }
                         break;
